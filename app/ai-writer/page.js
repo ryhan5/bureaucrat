@@ -367,7 +367,7 @@ export default function AIWriter() {
     } else {
       setIsLocked(false);
     }
-  }, [isPrivate, password]);
+  }, [isPrivate, password, generatedContent]);
 
   const exportContent = () => {
     const element = document.createElement('a');
@@ -763,7 +763,7 @@ export default function AIWriter() {
                       <DocumentTextIcon className="w-16 h-16 mx-auto mb-6 text-blue-400" />
                       <h3 className="text-xl font-semibold text-gray-900 mb-2">No Content Generated Yet</h3>
                       <p className="text-blue-600">
-                        Fill in the form on the left and click "Generate Content" to create your content
+                        Fill in the form on the left and click &quot;Generate Content&quot; to create your content
                       </p>
                     </div>
                   )}
