@@ -4,6 +4,23 @@ import crypto from 'crypto';
 
 const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GEMINI_API_KEY);
 
+// Encryption helper functions
+function generateKey(password) {
+  return crypto.scryptSync(password, 'salt', 32);
+}
+
+function encrypt(text, password) {
+  const key = generateKey(password);
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv('aes-256-cbc', key, iv);
+  let encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  return {
+    iv: iv.toString('hex'),
+    content: encrypted
+  };
+}
+
 export async function POST(req) {
   try {
     const { topic, type, duration, audience, tone, language, isPrivate, password } = await req.json();
@@ -36,28 +53,18 @@ export async function POST(req) {
     const response = await result.response;
     const content = response.text();
 
-    let encryptedContent = content;
-    let encryptionKey = null;
-
     // If private, encrypt the content
     if (isPrivate && password) {
-      // Generate a random encryption key
-      encryptionKey = crypto.randomBytes(32);
-      
-      // Create cipher with password-derived key
-      const cipher = crypto.createCipher('aes-256-cbc', password);
-      
-      // Encrypt the content
-      encryptedContent = cipher.update(content, 'utf8', 'hex');
-      encryptedContent += cipher.final('hex');
+      const encrypted = encrypt(content, password);
+      return NextResponse.json({
+        content: JSON.stringify(encrypted),
+        isEncrypted: true
+      });
     }
 
-    // Return the response
-    return NextResponse.json({
-      content: isPrivate ? encryptedContent : content,
-      encryptionKey: encryptionKey ? encryptionKey.toString('hex') : null,
-      isEncrypted: isPrivate,
-      timestamp: new Date().toISOString()
+    return NextResponse.json({ 
+      content,
+      isEncrypted: false 
     });
   } catch (error) {
     console.error('Generation error:', error);

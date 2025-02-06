@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import dbConnect from '../../lib/mongoose';
+import dbConnect from '../../lib/mongodb';
 import Task from '../../models/Task';
 
 export async function POST(request) {
