@@ -220,13 +220,14 @@ export default function Tasks() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-blue-800 mb-2">
+                  <label className="block text-sm font-semibold text-blue-800 mb-2 flex items-center gap-2">
                     Description
+                    <span className="text-xs font-normal text-slate-500">(Optional)</span>
                   </label>
                   <textarea
                     value={newTask.description}
                     onChange={(e) => setNewTask({...newTask, description: e.target.value})}
-                    placeholder="Enter task description..."
+                    placeholder="Add a description if needed..."
                     className="w-full px-4 py-3 bg-white border-2 border-blue-100 rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 text-slate-800 placeholder-slate-400 resize-none h-24 transition-colors"
                   />
                 </div>
@@ -371,7 +372,9 @@ export default function Tasks() {
                           </span>
                         </div>
                         <h3 className="text-lg font-semibold text-slate-800 mb-1">{task.title}</h3>
-                        <p className="text-slate-600 mb-2">{task.description}</p>
+                        {task.description && (
+                          <p className="text-slate-600 mb-2">{task.description}</p>
+                        )}
                         <div className="flex flex-wrap gap-2 text-sm">
                           <span className={`px-3 py-1 rounded-lg font-medium ${getStatusColor(task.status)}`}>
                             {task.status.charAt(0).toUpperCase() + task.status.slice(1)}
